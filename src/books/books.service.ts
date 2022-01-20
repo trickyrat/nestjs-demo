@@ -1,42 +1,38 @@
 import { HttpCode, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Observable, of } from "rxjs";
+import { Repository } from "typeorm";
 import { BookDto } from "./dto/book.dto";
 import { UpdateBookDto } from "./dto/update-book.dto";
+import { Book } from "./entities/book.entity";
 
 @Injectable()
-export class BookService {
-  books: BookDto[]
-
-
-  constructor() {
-    this.books = [
-      new BookDto("1", "book1"),
-      new BookDto("2", "book2"),
-      new BookDto("3", "book3"),
-      new BookDto("4", "book4"),
-    ]
+export class BooksService {
+  constructor(
+    @InjectRepository(Book)
+    private booksRepository: Repository<Book>
+  ) {
   }
 
-  findAll(): BookDto[] {
-    return this.books;
+  findAll(): Promise<Book[]> {
+    return this.booksRepository.find();
   }
 
-  findOne(id: string): BookDto {
-    let res = this.books.find(x => x.id === id)
-    return res
+  findOne(id: string): Promise<Book> {
+    return this.booksRepository.findOne(id)
   }
 
-  async create(newBook: BookDto) {
-    this.books.push(newBook)
+  async create(newBook: Book): Promise<Book> {
+    return this.booksRepository.create(newBook)
   }
 
-  update(id: string, updateBookDto: UpdateBookDto) {
-    let index = this.books.findIndex(x => x.id === id)
-    if (index !== -1) {
-      this.books[index].title = updateBookDto.title
-    }
-  }
+  // async update(id: string, updateBookDto: UpdateBookDto) {
+  //   let book = await this.booksRepository.findOne(id)
+  //   book.title = updateBookDto.title
+  //   //this.booksRepository.update(book)
+  // }
 
-  delete(id: string) {
-    this.books.splice(this.books.findIndex(x => x.id === id), 1)
+  async delete(id: string): Promise<void> {
+    await this.booksRepository.delete(id)
   }
 }
