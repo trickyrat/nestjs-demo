@@ -2,10 +2,10 @@ import { CacheModule, MiddlewareConsumer, Module, NestModule, RequestMethod } fr
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './logger.middleware';
-import { BooksController } from './books/books.controller';
-import { BooksService } from './books/books.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
+import { BooksModule } from './books/books.module';
+import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -15,10 +15,12 @@ import { getConnectionOptions } from 'typeorm';
         Object.assign(await getConnectionOptions(), {
           autoLoadEntities: true
         })
-    })
+    }),
+    BooksModule,
+    AuthorsModule
   ],
-  controllers: [AppController, BooksController],
-  providers: [AppService, BooksService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
