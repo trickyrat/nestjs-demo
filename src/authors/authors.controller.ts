@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { ListAllEntities } from 'src/listAllEntities.model';
+import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
+import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
@@ -16,8 +16,9 @@ export class AuthorsController {
   }
 
   @Get()
-  findAll(@Query() query: ListAllEntities): Promise<Author[]> {
-    return this.authorsService.findAll(query);
+  async findAll(@Query() query: PagedSortedAndFilteredResultRequestDto): Promise<PagedResultDto<Author>> {
+    let res = await this.authorsService.findAll(query);
+    return new PagedResultDto<Author>(res[0], res[1]);
   }
 
   @Get(':id')

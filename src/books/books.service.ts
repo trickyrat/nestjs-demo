@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthorsService } from 'src/authors/authors.service';
-import { Connection, EntityNotFoundError, Repository } from 'typeorm';
+import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
+import { Connection, Repository } from 'typeorm';
+import { BookGetListInput } from './dto/BookGetListInput.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
@@ -45,8 +47,23 @@ export class BooksService {
     bookToInsert = await this.bookRepository.save(bookToInsert);
   }
 
-  findAll(): Promise<Book[]> {
-    return this.bookRepository.find();
+  findAll(input: BookGetListInput): Promise<[Book[], number]> {
+    let qb = this.bookRepository
+      .createQueryBuilder("book")
+      .innerJoin("book.author", "author");
+    if (input.filter) {
+      qb = qb.andWhere("book.title like :title", { title: input.filter + "%" });
+    }
+    if (input.startDate && input.endDate) {
+      qb = qb.andWhere("book.publishDate BETWEEN :start AND :end", {
+        start: input.startDate,
+        end: input.endDate
+      });
+    }
+    return qb.orderBy(input.sorting, input.order === "asc" ? "ASC" : "DESC")
+      .skip(input.skipCount)
+      .take(input.maxResultCount)
+      .getManyAndCount();
   }
 
   findOne(id: number): Promise<Book> {
@@ -63,7 +80,7 @@ export class BooksService {
   }
 
   async remove(id: number) {
-    let bookToDelete = await this.bookRepository.findOne(id);
+    let bookToDelete = await this.bookRepository.findOne({ "id": id });
     await this.bookRepository.remove(bookToDelete);
   }
 }

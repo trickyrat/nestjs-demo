@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ListAllEntities } from 'src/listAllEntities.model';
+import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
 import { Repository } from 'typeorm';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
@@ -10,7 +10,6 @@ import { Author } from './entities/author.entity';
 export class AuthorsService {
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>) {
-
   }
 
   create(createAuthorDto: CreateAuthorDto) {
@@ -19,18 +18,19 @@ export class AuthorsService {
     this.authorRepository.save(author);
   }
 
-  findAll(query: ListAllEntities): Promise<Author[]> {
-    return this.authorRepository
-      .createQueryBuilder("author")
-      // .where("author.name")
-      .orderBy(query.sorting)
+  findAll(query: PagedSortedAndFilteredResultRequestDto): Promise<[Author[], number]> {
+    let qb = this.authorRepository.createQueryBuilder("author");
+    if (query.filter) {
+      qb = qb.where("author.name like :name", { name: query.filter + "%" });
+    }
+    return qb.orderBy(query.sorting, query.order === "asc" ? "ASC" : "DESC")
       .skip(query.skipCount)
       .take(query.maxResultCount)
-      .getMany();
+      .getManyAndCount()
   }
 
   findOne(id: number) {
-    return this.authorRepository.findOne(id);
+    return this.authorRepository.findOne({ id: id });
   }
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto) {

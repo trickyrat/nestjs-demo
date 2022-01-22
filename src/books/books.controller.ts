@@ -1,5 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
+import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
+import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
 import { BooksService } from './books.service';
+import { BookGetListInput } from './dto/BookGetListInput.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
@@ -13,8 +16,9 @@ export class BooksController {
   }
 
   @Get()
-  findAll() {
-    return this.booksService.findAll();
+  async findAll(@Query() query: BookGetListInput) {
+    let res = await this.booksService.findAll(query);
+    return new PagedResultDto(res[0], res[1]);
   }
 
   @Get(':id')
