@@ -19,7 +19,7 @@ import { AuthorsModule } from './authors/authors.module';
     BooksModule,
     AuthorsModule
   ],
-  controllers: [AppController],
+  controllers: [AppController,],
   providers: [AppService],
 })
 export class AppModule implements NestModule {

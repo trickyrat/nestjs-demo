@@ -8,7 +8,6 @@ import { Author } from './entities/author.entity';
 
 @Injectable()
 export class AuthorsService {
-
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>) {
 
@@ -23,7 +22,7 @@ export class AuthorsService {
   findAll(query: ListAllEntities): Promise<Author[]> {
     return this.authorRepository
       .createQueryBuilder("author")
-      .where("author.name")
+      // .where("author.name")
       .orderBy(query.sorting)
       .skip(query.skipCount)
       .take(query.maxResultCount)

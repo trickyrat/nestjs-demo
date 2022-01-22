@@ -5,8 +5,15 @@
   "username": "root",
   "password": "trickyrat",
   "database": "test",
+  "logging": true,
   "entities": [
     "dist/**/*.entity{.ts,.js}"
+  ],
+  "migrations": [
+    "src/migration/**/*.ts"
+  ],
+  "subscribers": [
+    "src/subscriber/**/*.ts"
   ],
   "synchronize": true
 }
