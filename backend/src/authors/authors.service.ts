@@ -19,8 +19,8 @@ export class AuthorsService {
     this.authorRepository.save(author);
   }
 
-  findAll(query: ListAllEntities): Promise<Author[]> {
-    return this.authorRepository
+  async findAll(query: ListAllEntities): Promise<Author[]> {
+    return await this.authorRepository
       .createQueryBuilder("author")
       // .where("author.name")
       .orderBy(query.sorting)
@@ -29,8 +29,8 @@ export class AuthorsService {
       .getMany();
   }
 
-  findOne(id: number) {
-    return this.authorRepository.findOne(id);
+  async findOne(id: number): Promise<Author> {
+    return await this.authorRepository.findOne(id);
   }
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto) {
@@ -39,7 +39,7 @@ export class AuthorsService {
     await this.authorRepository.save(author)
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     let authorToDelete = await this.authorRepository.findOne(id);
     await this.authorRepository.remove(authorToDelete);
   }
