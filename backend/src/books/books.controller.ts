@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Query } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -15,8 +15,9 @@ export class BooksController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.booksService.findAll();
+  async findAll(@Query() query: BookGetListInput) {
+    let res = await this.booksService.findAll(query);
+    return new PagedResultDto(res[0], res[1]);
   }
 
   @Get(':id')

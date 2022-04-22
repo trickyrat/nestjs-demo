@@ -10,7 +10,6 @@ import { Author } from './entities/author.entity';
 export class AuthorsService {
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>) {
-
   }
 
   create(createAuthorDto: CreateAuthorDto) {
@@ -19,14 +18,14 @@ export class AuthorsService {
     this.authorRepository.save(author);
   }
 
-  async findAll(query: ListAllEntities): Promise<Author[]> {
+  async findAll(query: ListAllEntities): Promise<[Author[], number]> {
     return await this.authorRepository
       .createQueryBuilder("author")
       // .where("author.name")
       .orderBy(query.sorting)
       .skip(query.skipCount)
       .take(query.maxResultCount)
-      .getMany();
+      .getManyAndCount()
   }
 
   async findOne(id: number): Promise<Author> {
