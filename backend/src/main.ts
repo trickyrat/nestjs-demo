@@ -2,11 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
+
+const allowList = ['http://localhost:8081'];
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
-
+  app.enableCors({
+    origin: allowList
+  });
   app.setGlobalPrefix("/api");
 
   const config = new DocumentBuilder()

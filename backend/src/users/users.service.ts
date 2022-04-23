@@ -78,7 +78,7 @@ export class UsersService {
   }
 
   async checkDuplicateUsername(username: string): Promise<boolean> {
-    let user = this.userRepository.findOne(username);
+    let user = await this.userRepository.findOne({ where: { username: username } });
     if (user) {
       return false;
     }
