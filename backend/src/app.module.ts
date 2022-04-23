@@ -8,6 +8,7 @@ import { BooksModule } from './books/books.module';
 import { AuthorsModule } from './authors/authors.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { JwtMiddleware } from './middleware/jwt.middleware';
 
 
 @Module({
@@ -29,7 +30,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       //.apply(LoggerMiddleware)
-      .apply()
+      .apply(JwtMiddleware)
       .forRoutes({ path: "*", method: RequestMethod.ALL })
   }
 

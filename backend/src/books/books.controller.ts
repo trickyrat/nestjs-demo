@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Query } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
 import { BooksService } from './books.service';
+import { BookGetListInput } from './dto/BookGetListInput.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 

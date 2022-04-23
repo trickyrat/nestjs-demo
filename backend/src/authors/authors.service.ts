@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ListAllEntities } from 'src/listAllEntities.model';
+import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
 import { Repository } from 'typeorm';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
@@ -18,18 +18,17 @@ export class AuthorsService {
     this.authorRepository.save(author);
   }
 
-  async findAll(query: ListAllEntities): Promise<[Author[], number]> {
-    return await this.authorRepository
-      .createQueryBuilder("author")
-      // .where("author.name")
-      .orderBy(query.sorting)
-      .skip(query.skipCount)
-      .take(query.maxResultCount)
-      .getManyAndCount()
+  async findAll(query: PagedSortedAndFilteredResultRequestDto): Promise<[Author[], number]> {
+    let qb = this.authorRepository.createQueryBuilder("author");
+    if (query.filter) {
+      qb = qb.where("author.name like :name", { name: query.filter + "%" });
+    }
+    return qb.orderBy(query.sorting, query.order === "asc" ? "ASC" : "DESC")
+      .getManyAndCount();
   }
 
   async findOne(id: number): Promise<Author> {
-    return await this.authorRepository.findOne(id);
+    return await this.authorRepository.findOne({ id: id });
   }
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto) {

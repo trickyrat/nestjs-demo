@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Headers } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { UserDto } from 'src/users/user.dto';
+import { LoginUserDto } from 'src/users/dtos/login-user.dto';
+import { SignUpUserDto } from 'src/users/dtos/signup-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -8,15 +9,19 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+
   @Post("login")
-  async login(@Body() user: UserDto) {
-    return this.authService.login(user);
+  async login(@Body() user: LoginUserDto) {
+    let result = this.authService.login(user);
+    if (result) {
+
+    }
+    return
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get("profile")
-  async getProfile(@Headers() token: string) {
-    const user = await this.authService.validateUser(token);
-    return req.user;
+  @Post("signup")
+  async signUp(@Body() input: SignUpUserDto) {
+
   }
+
 }

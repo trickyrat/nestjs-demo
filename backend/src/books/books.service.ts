@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthorsService } from 'src/authors/authors.service';
 import { Connection, Repository } from 'typeorm';
+import { BookGetListInput } from './dto/BookGetListInput.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
 
+@UseGuards(JwtAuthGuard)
 @Injectable()
 export class BooksService {
 

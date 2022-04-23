@@ -11,7 +11,6 @@ export class Book {
   })
   title: string;
 
-
   @Column()
   publishDate: string;
 
