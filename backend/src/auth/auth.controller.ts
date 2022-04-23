@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Headers, HttpException, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { json } from 'node:stream/consumers';
 import { Observable } from 'rxjs';
 import { LoginUserDto } from 'src/users/dtos/login-user.dto';
@@ -10,7 +10,6 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-
   @Post("login")
   @HttpCode(200)
   async login(@Body() user: LoginUserDto) {
@@ -18,8 +17,9 @@ export class AuthController {
   }
 
   @Post("signup")
+  @HttpCode(200)
   async signUp(@Body() input: SignUpUserDto) {
-
+    return await this.authService.signUp(input);
   }
 
 }

@@ -3,10 +3,14 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
-import { genSalt, hash, compare } from 'bcryptjs';
+import { genSalt, hash } from 'bcryptjs';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { UserContants } from './constants';
 import { SignUpUserDto } from './dtos/signup-user.dto';
+import { UserDto } from './dtos/user.dto';
+import { plainToClass } from 'class-transformer';
+import { getNowString } from 'src/utils/time';
+
 
 @Injectable()
 export class UsersService {
@@ -46,37 +50,36 @@ export class UsersService {
     });
   }
 
-  async create(input: SignUpUserDto): Promise<User> {
-    const salt = await genSalt(UserContants.saltRound);
-    let roles: Role[] = [];
-    if (input.roles.length > 0) {
-      roles = await this.roleRepository.find({
-        where: {
-          name: input.roles
-        }
-      })
-    }
+  async insert(input: SignUpUserDto): Promise<UserDto> {
+    let roles: Role[] = await this.roleRepository.find({
+      where: {
+        name: input.roles
+      }
+    });
     let user = new User();
     user.username = input.username;
+    const salt = await genSalt(UserContants.saltRound);
     user.password = await hash(input.password, salt);
     user.salt = salt;
     user.nickname = input.nickname;
     user.roles = roles;
-
-    return await this.userRepository.save(user);
+    user.createDate = getNowString();
+    user = await this.userRepository.save(user);
+    return plainToClass(UserDto, user.username);
   }
 
-  // async checkRolesExisted(roles: Role[]): Promise<boolean> {
-  //   this.roleRepository.find({
-  //     where: {
-
-  //     }
-  //   })
-  // }
+  async checkRolesExisted(roles: string[]): Promise<boolean> {
+    let res = await this.roleRepository.find({
+      where: {
+        name: roles
+      }
+    });
+    return res.length <= 0 ? false : true;
+  }
 
   async checkDuplicateUsername(username: string): Promise<boolean> {
     let user = this.userRepository.findOne(username);
-    if (user) {
+    if (!user) {
       return false;
     }
     return true;

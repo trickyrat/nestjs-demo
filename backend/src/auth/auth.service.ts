@@ -1,12 +1,11 @@
-import { Body, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from "@nestjs/jwt";
-import { Role } from 'src/users/entities/role.entity';
 import { jwtConstants } from './constants';
 import { JwtPayload } from './jwt-payload.interface';
 import { LoginUserDto } from 'src/users/dtos/login-user.dto';
 import { SignUpUserDto } from 'src/users/dtos/signup-user.dto';
-import { compare, hash } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -48,6 +47,17 @@ export class AuthService {
   }
 
   async signUp(input: SignUpUserDto): Promise<any> {
-
+    if (!await this.userService.checkDuplicateUsername(input.username)) {
+      throw new HttpException({ status: HttpStatus.BAD_REQUEST, message: "User has already exists!" }, HttpStatus.BAD_REQUEST);
+    }
+    if (input.roles.length > 0) {
+      if (!(await this.userService.checkRolesExisted(input.roles))) {
+        throw new HttpException({ status: HttpStatus.NOT_FOUND, message: "Not found roles!" }, HttpStatus.NOT_FOUND);
+      }
+    }
+    let res = await this.userService.insert(input);
+    if (res) {
+      return { status: HttpStatus.OK, message: "User was registered successfully!" };
+    }
   }
 }
