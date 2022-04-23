@@ -6,6 +6,7 @@ import { Role } from './entities/role.entity';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { UserContants } from './constants';
+import { SignUpUserDto } from './dtos/signup-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -36,17 +37,33 @@ export class UsersService {
     }
   }
 
-  async findOne(user: LoginUserDto): Promise<User> {
-    let res = await this.userRepository.findOneOrFail({
+  async findOne(input: LoginUserDto): Promise<User> {
+    return await this.userRepository.findOne({
       where: {
-        username: user.username
-      }
-    })
-    if (!res) {
-      // 不存在该用户
+        username: input.username
+      },
+      relations: ["roles"],
+    });
+  }
+
+  async create(input: SignUpUserDto): Promise<User> {
+    const salt = await genSalt(UserContants.saltRound);
+    let roles: Role[] = [];
+    if (input.roles.length > 0) {
+      roles = await this.roleRepository.find({
+        where: {
+          name: input.roles
+        }
+      })
     }
-    let isMatched = await compare(user.password, res.password);
-    return isMatched ? res : null;
+    let user = new User();
+    user.username = input.username;
+    user.password = await hash(input.password, salt);
+    user.salt = salt;
+    user.nickname = input.nickname;
+    user.roles = roles;
+
+    return await this.userRepository.save(user);
   }
 
   // async checkRolesExisted(roles: Role[]): Promise<boolean> {

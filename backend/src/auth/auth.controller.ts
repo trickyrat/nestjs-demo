@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Headers, HttpException, HttpStatus, HttpCode } from '@nestjs/common';
+import { json } from 'node:stream/consumers';
 import { Observable } from 'rxjs';
 import { LoginUserDto } from 'src/users/dtos/login-user.dto';
 import { SignUpUserDto } from 'src/users/dtos/signup-user.dto';
@@ -11,12 +12,9 @@ export class AuthController {
 
 
   @Post("login")
+  @HttpCode(200)
   async login(@Body() user: LoginUserDto) {
-    let result = this.authService.login(user);
-    if (result) {
-
-    }
-    return
+    return await this.authService.sigin(user);
   }
 
   @Post("signup")

@@ -2,9 +2,13 @@ import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Query } fro
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
 import { BooksService } from './books.service';
+import { BookDto } from './dto/book.dto';
 import { BookGetListInput } from './dto/BookGetListInput.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { plainToClass } from "class-transformer";
+import { ApiBody } from '@nestjs/swagger';
+
 
 @Controller('books')
 export class BooksController {
@@ -17,14 +21,16 @@ export class BooksController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll(@Query() query: BookGetListInput) {
+  async findAll(@Query() query: BookGetListInput): Promise<PagedResultDto<BookDto>> {
     let res = await this.booksService.findAll(query);
-    return new PagedResultDto(res[0], res[1]);
+    let items: BookDto[] = res[0].map(x => Object.assign(new BookDto(), x))
+    return new PagedResultDto(items, res[1]);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.booksService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    let entity = await this.booksService.findOne(+id);
+    return plainToClass(BookDto, entity);
   }
 
   @Put(':id')

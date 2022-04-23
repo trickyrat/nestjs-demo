@@ -8,6 +8,7 @@ import { BookGetListInput } from './dto/BookGetListInput.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
+import { plainToClass } from "class-transformer";
 
 @UseGuards(JwtAuthGuard)
 @Injectable()
@@ -41,9 +42,9 @@ export class BooksService {
   }
 
   async create(createBookDto: CreateBookDto) {
-    let bookToInsert = new Book();
-    bookToInsert.title = createBookDto.title;
-    bookToInsert.publishDate = createBookDto.publishDate;
+    let bookToInsert = plainToClass(Book, createBookDto);
+    //bookToInsert.title = createBookDto.title;
+    //bookToInsert.publishDate = createBookDto.publishDate;
     let author = await this.authorService.findOne(createBookDto.authorId);
     bookToInsert.author = author;
     bookToInsert = await this.bookRepository.save(bookToInsert);
