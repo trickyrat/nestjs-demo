@@ -79,7 +79,7 @@ export class UsersService {
 
   async checkDuplicateUsername(username: string): Promise<boolean> {
     let user = this.userRepository.findOne(username);
-    if (!user) {
+    if (user) {
       return false;
     }
     return true;

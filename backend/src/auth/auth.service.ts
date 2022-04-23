@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from './constants';
@@ -48,11 +48,11 @@ export class AuthService {
 
   async signUp(input: SignUpUserDto): Promise<any> {
     if (!await this.userService.checkDuplicateUsername(input.username)) {
-      throw new HttpException({ status: HttpStatus.BAD_REQUEST, message: "User has already exists!" }, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException({ status: HttpStatus.BAD_REQUEST, message: "User has already exists!" });
     }
     if (input.roles.length > 0) {
       if (!(await this.userService.checkRolesExisted(input.roles))) {
-        throw new HttpException({ status: HttpStatus.NOT_FOUND, message: "Not found roles!" }, HttpStatus.NOT_FOUND);
+        throw new NotFoundException({ status: HttpStatus.NOT_FOUND, message: "Not found roles!" });
       }
     }
     let res = await this.userService.insert(input);

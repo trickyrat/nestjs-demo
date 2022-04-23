@@ -7,6 +7,8 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
 
+  app.setGlobalPrefix("/api");
+
   const config = new DocumentBuilder()
     .setTitle("Nestjs Demo Api")
     .setDescription("The nest js demo api swagger ui.")
