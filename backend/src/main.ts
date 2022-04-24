@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 
@@ -13,7 +14,7 @@ async function bootstrap() {
     origin: allowList
   });
   app.setGlobalPrefix("/api");
-
+  app.use(cookieParser());
   const config = new DocumentBuilder()
     .setTitle("Nestjs Demo Api")
     .setDescription("The nest js demo api swagger ui.")

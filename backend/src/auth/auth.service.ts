@@ -46,6 +46,11 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  async getCookieWithJwtToken(payload: JwtPayload) {
+    const { accessToken, refreshToken } = await this.getToken(payload);
+    return `Authentication=${accessToken};HttpOnly;Path:/;Max-Age=${jwtConstants.accessTokenExpiresIn}`;
+  }
+
   async signUp(input: SignUpUserDto): Promise<any> {
     if (!await this.userService.checkDuplicateUsername(input.username)) {
       throw new BadRequestException({ status: HttpStatus.BAD_REQUEST, message: "User has already exists!" });
