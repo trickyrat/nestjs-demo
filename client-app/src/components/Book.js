@@ -12,7 +12,6 @@ const deleteBook = (id) => {
 }
 
 const renderBooks = (books) => {
-  console.log(books);
   if (books && books.length > 0) {
     return (books.map(book => (
       <tr key={book.id}>

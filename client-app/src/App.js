@@ -50,6 +50,7 @@ function App() {
         </div>
         {currentUser ? (
           <div className="navbar-nav ml-auto">
+            <li>{currentUser.username}</li>
             <li className="nav-item">
               <a href="/login" className="nav-link" onClick={logOut}>
                 LogOut

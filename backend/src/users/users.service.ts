@@ -77,6 +77,15 @@ export class UsersService {
     return res.length <= 0 ? false : true;
   }
 
+  async checkUserExist(username: string): Promise<boolean> {
+    let user = await this.userRepository.findOne({
+      where: {
+        username: username
+      }
+    });
+    return user === null ? false : true;
+  }
+
   async checkDuplicateUsername(username: string): Promise<boolean> {
     let user = await this.userRepository.findOne({ where: { username: username } });
     if (user) {

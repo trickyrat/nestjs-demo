@@ -18,11 +18,11 @@ export class AuthService {
   async sigin(input: LoginUserDto): Promise<any> {
     let user = await this.userService.findOne(input);
     if (!user) {
-      return { status: HttpStatus.NOT_FOUND, message: "username or password is not correct." };
+      return null;
     }
     let isMatched = await compare(input.password, user.password)
     if (!isMatched) {
-      return { status: HttpStatus.NOT_FOUND, message: "username or password is not correct." }
+      return null;
     }
     let roles: string[] = user.roles.length == 0 ? [] : user.roles.map(x => x.name);
     let payload: JwtPayload = {
@@ -31,25 +31,46 @@ export class AuthService {
       roles: roles,
       permissions: []
     };
-    const { accessToken, refreshToken } = await this.getToken(payload);
+    const cookie = await this.getCookie(payload);
 
-    return { status: HttpStatus.OK, refreshToken: refreshToken, accessToken: accessToken, message: "login successfully!" }
+    return { payload: payload, cookie: cookie }
   }
 
-  async getToken(payload: JwtPayload): Promise<any> {
+  async getCookie(payload: JwtPayload): Promise<any> {
     const accessToken = await this.jwtService.signAsync(payload, {
       expiresIn: jwtConstants.accessTokenExpiresIn
     });
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: jwtConstants.refreshTokenExpiresIn
     });
-    return { accessToken, refreshToken };
+    return {
+      cookieName: jwtConstants.cookiesName,
+      value: accessToken + ";refreshToken=" + refreshToken,
+      option: {
+        httpOnly: true,
+        path: "/",
+        expires: new Date("2022-10-30T23:59:00")
+      }
+    }
   }
 
-  async getCookieWithJwtToken(payload: JwtPayload) {
-    const { accessToken, refreshToken } = await this.getToken(payload);
-    return `Authentication=${accessToken};HttpOnly;Path:/;Max-Age=${jwtConstants.accessTokenExpiresIn}`;
+  async refresh(refreshToken: string): Promise<any> {
+    let verifyResult = await this.jwtService.verifyAsync(refreshToken);
+    if (!verifyResult) {
+      throw new NotFoundException({ status: HttpStatus.NOT_FOUND, message: "Invalid refresh token." });
+    }
+    let accessToken = await this.jwtService.signAsync(this.jwtService.decode(refreshToken));
+    return {
+      cookieName: jwtConstants.cookiesName,
+      value: accessToken + ";refreshToken=" + refreshToken,
+      option: {
+        httpOnly: true,
+        path: "/",
+        expires: new Date("2022-10-30T23:59:00")
+      }
+    };
   }
+
 
   async signUp(input: SignUpUserDto): Promise<any> {
     if (!await this.userService.checkDuplicateUsername(input.username)) {

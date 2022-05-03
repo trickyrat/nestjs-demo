@@ -1,4 +1,7 @@
 import axios from "axios";
+import { Cookies, useCookies } from "react-cookie";
+
+[cookies, setCookie, removeCookie] = useCookies(["jwtCookie"])
 
 const API_URL = "http://localhost:3000/api/auth/";
 
@@ -14,21 +17,26 @@ const login = (username, password) => {
   return axios.post(API_URL + "login", {
     username,
     password
-  }).then((response) => {
-    if (response.data.accessToken) {
-      localStorage.setItem("user", JSON.stringify(response.data));
-    }
-    return response.data;
+  }, {
+    withCredentials: true
+  }).then((res) => {
+    localStorage.setItem("currentUser", res.data.data.nickname);
   });
 };
 
 const logout = () => {
-  localStorage.removeItem("user");
+  localStorage.removeItem("currentUser");
 };
 
 const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user"));
+  return localStorage.getItem("currentUser");
 };
+
+const refresh = () => {
+  axios.post(API_URL + "refresh", {
+    cookies
+  })
+}
 
 const AuthService = {
   register,

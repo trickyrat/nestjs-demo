@@ -11,7 +11,8 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
   app.enableCors({
-    origin: allowList
+    origin: allowList,
+    credentials: true
   });
   app.setGlobalPrefix("/api");
   app.use(cookieParser());

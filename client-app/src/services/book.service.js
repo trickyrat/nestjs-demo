@@ -1,5 +1,4 @@
 import axios from "axios";
-import authHeader from "./auth-header";
 
 const API_URL = "http://localhost:3000/api/books"
 
@@ -10,18 +9,14 @@ const findAll = (skipCount, maxResultCount, sort) => {
       maxResultCount: maxResultCount,
       sort: sort
     },
-    headers: {
-      Authorization: authHeader()
-    }
+    withCredentials: true,
   });
 };
 
 
 const findOne = (id) => {
   return axios.get(API_URL + `/${id}`, {
-    headers: {
-      Authorization: authHeader()
-    }
+    withCredentials: true,
   });
 };
 
@@ -31,17 +26,13 @@ const update = (id, title, price) => {
       title: title,
       price: price
     },
-    headers: {
-      Authorization: authHeader()
-    }
+    withCredentials: true,
   })
 };
 
 const remove = (id) => {
   return axios.delete(API_URL + `/${id}`, {
-    headers: {
-      Authorization: authHeader()
-    }
+    withCredentials: true,
   })
 };
 
@@ -53,9 +44,7 @@ const insert = (title, price, publish_date, authorId) => {
       publish_date: publish_date,
       authorId: authorId
     },
-    headers: {
-      Authorization: authHeader()
-    }
+    withCredentials: true,
   });
 };
 
