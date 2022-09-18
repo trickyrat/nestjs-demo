@@ -15,7 +15,7 @@ export class AuthService {
 
   }
 
-  async sigin(input: LoginUserDto): Promise<any> {
+  async signin(input: LoginUserDto): Promise<any> {
     let user = await this.userService.findOne(input);
     if (!user) {
       return null;

@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
 import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
 import { AuthorsService } from './authors.service';
@@ -7,6 +8,7 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { Author } from './entities/author.entity';
 
 @Controller('authors')
+@ApiTags("Authors")
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) { }
 
