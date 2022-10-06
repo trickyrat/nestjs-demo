@@ -15,7 +15,7 @@ export class AuthService {
 
   }
 
-  async signin(input: LoginUserDto): Promise<any> {
+  async login(input: LoginUserDto): Promise<any> {
     let user = await this.userService.findOne(input);
     if (!user) {
       return null;
@@ -43,13 +43,15 @@ export class AuthService {
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: jwtConstants.refreshTokenExpiresIn
     });
+    let now = new Date();
+    let expireDate = new Date(now.setDate(now.getDate() + jwtConstants.cookieMaxAge));
     return {
       cookieName: jwtConstants.cookiesName,
       value: accessToken + ";refreshToken=" + refreshToken,
       option: {
         httpOnly: true,
         path: "/",
-        expires: new Date("2022-10-30T23:59:00")
+        expires: expireDate
       }
     }
   }
@@ -60,13 +62,15 @@ export class AuthService {
       throw new NotFoundException({ status: HttpStatus.NOT_FOUND, message: "Invalid refresh token." });
     }
     let accessToken = await this.jwtService.signAsync(this.jwtService.decode(refreshToken));
+    let now = new Date();
+    let expireDate = new Date(now.setDate(now.getDate() + jwtConstants.cookieMaxAge));
     return {
       cookieName: jwtConstants.cookiesName,
       value: accessToken + ";refreshToken=" + refreshToken,
       option: {
         httpOnly: true,
         path: "/",
-        expires: new Date("2022-10-30T23:59:00")
+        expires: expireDate
       }
     };
   }

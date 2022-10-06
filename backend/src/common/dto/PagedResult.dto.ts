@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiResponse } from "@nestjs/swagger";
 import { IHasTotalCount } from "../interface/IHasTotalCount";
 import { IListResult } from "../interface/IListResult";
 import { IPagedResult } from "../interface/IPagedResult";

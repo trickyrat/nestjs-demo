@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthorsService } from 'src/authors/authors.service';
 import { Connection, Repository } from 'typeorm';
-import { BookGetListInput } from './dto/BookGetListInput.dto';
+import { BookGetListRequest } from './dto/BookGetListRequest.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
@@ -50,7 +50,7 @@ export class BooksService {
     bookToInsert = await this.bookRepository.save(bookToInsert);
   }
 
-  findAll(input: BookGetListInput): Promise<[Book[], number]> {
+  findAll(input: BookGetListRequest): Promise<[Book[], number]> {
     let qb = this.bookRepository
       .createQueryBuilder("book")
       .innerJoin("book.author", "author");

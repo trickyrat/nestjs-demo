@@ -1,7 +1,7 @@
 export const jwtConstants = {
   secret: "secretKey",
-  refreshTokenExpiresIn: '2h',
-  accessTokenExpiresIn: '30m',
+  refreshTokenExpiresIn: '30 days',
+  accessTokenExpiresIn: '2 hours',
   cookiesName: "jwtCookie",
-  cookieMaxAge: 30 * 60
+  cookieMaxAge: 30
 }

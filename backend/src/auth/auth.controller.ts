@@ -16,7 +16,7 @@ export class AuthController {
   @HttpCode(200)
   async login(@Body() payload: LoginUserDto, @Res() response: Response) {
     let user = plainToClass(LoginUserDto, payload);
-    let result = await this.authService.signin(user);
+    let result = await this.authService.login(user);
     if (!result) {
       return response.status(400).json({ status: HttpStatus.BAD_REQUEST, message: "username or password is not correct." });
     }
