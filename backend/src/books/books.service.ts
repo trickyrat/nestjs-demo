@@ -3,8 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthorsService } from 'src/authors/authors.service';
-import { Connection, Repository } from 'typeorm';
-import { BookGetListRequest } from './dto/BookGetListRequest.dto';
+import { Connection, DataSource, Repository } from 'typeorm';
+import { GetBookListRequestDto } from './dto/BookGetListRequest.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
@@ -16,13 +16,13 @@ export class BooksService {
 
   constructor(
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>,
-    private connection: Connection,
+    private dataSource: DataSource,
     private authorService: AuthorsService) {
 
   }
 
   async createMany(createBookDtos: CreateBookDto[]) {
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let author = await this.authorService.findOne(createBookDtos[0].authorId);
@@ -50,7 +50,7 @@ export class BooksService {
     bookToInsert = await this.bookRepository.save(bookToInsert);
   }
 
-  findAll(input: BookGetListRequest): Promise<[Book[], number]> {
+  findAll(input: GetBookListRequestDto): Promise<[Book[], number]> {
     let qb = this.bookRepository
       .createQueryBuilder("book")
       .innerJoin("book.author", "author");
@@ -70,11 +70,11 @@ export class BooksService {
   }
 
   findOne(id: number): Promise<Book> {
-    return this.bookRepository.findOne({ "id": id });
+    return this.bookRepository.findOne({ where: { id: id } });
   }
 
   async update(id: number, updateBookDto: UpdateBookDto) {
-    let book = await this.bookRepository.findOne({ "id": id });
+    let book = await this.bookRepository.findOne({ where: { id: id } });
     book.title = updateBookDto.title;
     book.publishDate = updateBookDto.publishDate;
     let author = await this.authorService.findOne(updateBookDto.authorId);
@@ -83,7 +83,7 @@ export class BooksService {
   }
 
   async remove(id: number) {
-    let bookToDelete = await this.bookRepository.findOne({ "id": id });
+    let bookToDelete = await this.bookRepository.findOne({ where: { id: id } });
     await this.bookRepository.remove(bookToDelete);
   }
 }

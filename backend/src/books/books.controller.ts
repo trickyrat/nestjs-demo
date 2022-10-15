@@ -3,7 +3,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
 import { BooksService } from './books.service';
 import { BookDto } from './dto/book.dto';
-import { BookGetListRequest } from './dto/BookGetListRequest.dto';
+import { GetBookListRequestDto } from './dto/BookGetListRequest.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { plainToClass } from "class-transformer";
@@ -22,9 +22,9 @@ export class BooksController {
   }
 
   @Get()
-  @ApiQuery({ type: BookGetListRequest })
+  @ApiQuery({ type: GetBookListRequestDto })
   @ApiResponse({ type: PagedResultDto<BookDto> })
-  async findAll(@Query() query: BookGetListRequest): Promise<PagedResultDto<BookDto>> {
+  async findAll(@Query() query: GetBookListRequestDto): Promise<PagedResultDto<BookDto>> {
     let res = await this.booksService.findAll(query);
     let items: BookDto[] = res[0].map(x => Object.assign(new BookDto(), x))
     return new PagedResultDto<BookDto>(items, res[1]);

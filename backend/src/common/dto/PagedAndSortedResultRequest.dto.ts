@@ -1,11 +1,10 @@
-import { IPagedAndSortedResultRequest } from "../interface/IPagedAndSortedResultRequest";
-import { IPagedResultRequest } from "../interface/IPagedResultRequest";
+import { ApiPropertyOptional, OmitType } from "@nestjs/swagger";
 import { PagedResultRequestDto } from "./PagedResultRequest.dto";
 
 
-export class PagedAndSortedResultRequestDto extends PagedResultRequestDto implements IPagedAndSortedResultRequest, IPagedResultRequest {
+export class PagedAndSortedResultRequestDto extends OmitType(PagedResultRequestDto, []) {
+  @ApiPropertyOptional()
   order: string | null = "asc";
-  maxResultCount: number = 10;
-  skipCount: number = 0;
+  @ApiPropertyOptional()
   sorting: string | null = "id";
 }

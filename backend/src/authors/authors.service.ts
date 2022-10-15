@@ -28,17 +28,17 @@ export class AuthorsService {
   }
 
   async findOne(id: number): Promise<Author> {
-    return await this.authorRepository.findOne({ id: id });
+    return await this.authorRepository.findOne({ where: { id: id } });
   }
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto) {
-    let author = await this.authorRepository.findOne(id)
+    let author = await this.authorRepository.findOne({ where: { id: id } })
     author.name = updateAuthorDto.name;
     await this.authorRepository.save(author)
   }
 
   async remove(id: number): Promise<void> {
-    let authorToDelete = await this.authorRepository.findOne(id);
+    let authorToDelete = await this.authorRepository.findOne({ where: { id: id } });
     await this.authorRepository.remove(authorToDelete);
   }
 }

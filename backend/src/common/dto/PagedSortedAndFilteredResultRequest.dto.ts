@@ -1,11 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IFilteredResultRequest } from "../interface/IFilteredResultRequest";
-import { PagedAndSortedResultRequestDto } from "./PagedAndSortedResultRequest.dto";
+import { ApiPropertyOptional, ApiProperty } from "@nestjs/swagger";
 
-export class PagedSortedAndFilteredResultRequestDto
-  extends PagedAndSortedResultRequestDto implements IFilteredResultRequest {
-  @ApiPropertyOptional()
-  filter: string | null;
+export class PagedSortedAndFilteredResultRequestDto {
   @ApiProperty({
     description: "The count of data per page",
     minimum: 1,
@@ -13,6 +8,10 @@ export class PagedSortedAndFilteredResultRequestDto
     type: Number
   })
   maxResultCount: number = 10;
+  @ApiPropertyOptional()
+  order: string | null = "asc";
+  @ApiPropertyOptional()
+  sorting: string | null = "id";
   @ApiProperty({
     description: "The page index",
     minimum: 0,
@@ -21,8 +20,6 @@ export class PagedSortedAndFilteredResultRequestDto
   })
   skipCount: number = 0;
   @ApiPropertyOptional()
-  sorting: string | null = "id";
-  @ApiPropertyOptional()
-  order: string | null = "asc";
+  filter: string | null;
 }
 
