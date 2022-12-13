@@ -1,7 +1,8 @@
 import axios from "axios";
-import { Cookies, useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
 
-[cookies, setCookie, removeCookie] = useCookies(["jwtCookie"])
+
+// [cookies, setCookie, removeCookie] = useCookies(["jwtCookie"])
 
 const API_URL = "http://localhost:3000/api/auth/";
 
@@ -32,11 +33,11 @@ const getCurrentUser = () => {
   return localStorage.getItem("currentUser");
 };
 
-const refresh = () => {
-  axios.post(API_URL + "refresh", {
-    cookies
-  })
-}
+// const refresh = () => {
+//   axios.post(API_URL + "refresh", {
+//     cookies
+//   })
+// }
 
 const AuthService = {
   register,
