@@ -1,6 +1,6 @@
 export interface IAuditable {
-  createDate: string,
+  createdTime: string,
   createdBy: string,
-  lastModifyDate: string,
+  lastModifiedTime: string,
   lastModifiedBy: string,
 }

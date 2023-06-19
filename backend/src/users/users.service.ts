@@ -63,7 +63,7 @@ export class UsersService {
     user.salt = salt;
     user.nickname = input.nickname;
     user.roles = roles;
-    user.createDate = getNowString();
+    user.createdTime = getNowString();
     user = await this.userRepository.save(user);
     return plainToClass(UserDto, user.username);
   }

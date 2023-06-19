@@ -61,7 +61,8 @@ export class AuthService {
     if (!verifyResult) {
       throw new NotFoundException({ status: HttpStatus.NOT_FOUND, message: "Invalid refresh token." });
     }
-    let accessToken = await this.jwtService.signAsync(this.jwtService.decode(refreshToken));
+    let decode = this.jwtService.decode(refreshToken) as string;
+    let accessToken = await this.jwtService.signAsync(decode);
     let now = new Date();
     let expireDate = new Date(now.setDate(now.getDate() + jwtConstants.cookieMaxAge));
     return {

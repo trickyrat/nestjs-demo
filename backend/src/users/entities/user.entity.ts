@@ -1,10 +1,9 @@
 import { IAuditable } from "src/common/interface/IAuditable";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Role } from "./role.entity";
 
-@Entity("user")
+@Entity("users")
 export class User implements IAuditable {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,16 +19,16 @@ export class User implements IAuditable {
   @Column()
   nickname: string;
 
-  @Column({ nullable: true, })
-  createDate: string;
+  @CreateDateColumn({ name: "createdTime" })
+  createdTime: string;
 
   @Column({
     nullable: true,
   })
   createdBy: string;
 
-  @Column({ nullable: true })
-  lastModifyDate: string;
+  @UpdateDateColumn({ name: "lastModifiedTime", nullable: true })
+  lastModifiedTime: string;
 
   @Column({ nullable: true })
   lastModifiedBy: string;

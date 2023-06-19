@@ -1,8 +1,8 @@
 import { Author } from "src/authors/entities/author.entity";
 import { IAuditable } from "src/common/interface/IAuditable";
-import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity()
+@Entity("books")
 export class Book implements IAuditable {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,16 +18,16 @@ export class Book implements IAuditable {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column()
-  createDate: string;
+  @CreateDateColumn({ name: "createdTime" })
+  createdTime: string;
 
   @Column()
   createdBy: string;
 
-  @Column()
-  lastModifyDate: string;
+  @UpdateDateColumn({ name: "lastModifiedTime", nullable: true })
+  lastModifiedTime: string;
 
-  @Column()
+  @Column({ nullable: true })
   lastModifiedBy: string;
 
   @ManyToOne(type => Author, author => author.books, { cascade: true })
