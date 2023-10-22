@@ -6,17 +6,17 @@ export type CatDocument = HydratedDocument<Cat>;
 
 @Schema()
 export class Cat {
-    @Prop()
-    name: string;
+  @Prop()
+  name: string;
 
-    @Prop()
-    age: number;
+  @Prop()
+  age: number;
 
-    @Prop()
-    breed: string;
+  @Prop()
+  breed: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
-    owner: Owner;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
+  owner: Owner;
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat);

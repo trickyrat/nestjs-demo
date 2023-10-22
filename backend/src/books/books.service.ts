@@ -1,34 +1,31 @@
 import { Injectable, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthorsService } from 'src/authors/authors.service';
-import { Connection, DataSource, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { GetBookListRequestDto } from './dto/BookGetListRequest.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
-import { plainToClass } from "class-transformer";
+import { plainToClass } from 'class-transformer';
 
 @UseGuards(JwtAuthGuard)
 @Injectable()
 export class BooksService {
-
   constructor(
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>,
     private dataSource: DataSource,
-    private authorService: AuthorsService) {
-
-  }
+    private authorService: AuthorsService,
+  ) {}
 
   async createMany(createBookDtos: CreateBookDto[]) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let author = await this.authorService.findOne(createBookDtos[0].authorId);
+    const author = await this.authorService.findOne(createBookDtos[0].authorId);
     try {
-      createBookDtos.forEach(async x => {
-        let bookToInsert = new Book();
+      createBookDtos.forEach(async (x) => {
+        const bookToInsert = new Book();
         bookToInsert.title = x.title;
         bookToInsert.publishDate = x.publishDate;
         bookToInsert.author = author;
@@ -45,25 +42,26 @@ export class BooksService {
     let bookToInsert = plainToClass(Book, createBookDto);
     //bookToInsert.title = createBookDto.title;
     //bookToInsert.publishDate = createBookDto.publishDate;
-    let author = await this.authorService.findOne(createBookDto.authorId);
+    const author = await this.authorService.findOne(createBookDto.authorId);
     bookToInsert.author = author;
     bookToInsert = await this.bookRepository.save(bookToInsert);
   }
 
   findAll(input: GetBookListRequestDto): Promise<[Book[], number]> {
     let qb = this.bookRepository
-      .createQueryBuilder("book")
-      .innerJoin("book.author", "author");
+      .createQueryBuilder('book')
+      .innerJoin('book.author', 'author');
     if (input.filter) {
-      qb = qb.andWhere("book.title like :title", { title: input.filter + "%" });
+      qb = qb.andWhere('book.title like :title', { title: input.filter + '%' });
     }
     if (input.startDate && input.endDate) {
-      qb = qb.andWhere("book.publishDate BETWEEN :start AND :end", {
+      qb = qb.andWhere('book.publishDate BETWEEN :start AND :end', {
         start: input.startDate,
-        end: input.endDate
+        end: input.endDate,
       });
     }
-    return qb.orderBy(input.sorting, input.order === "asc" ? "ASC" : "DESC")
+    return qb
+      .orderBy(input.sorting, input.order === 'asc' ? 'ASC' : 'DESC')
       .skip(input.skipCount)
       .take(input.maxResultCount)
       .getManyAndCount();
@@ -77,13 +75,15 @@ export class BooksService {
     let book = await this.bookRepository.findOne({ where: { id: id } });
     book.title = updateBookDto.title;
     book.publishDate = updateBookDto.publishDate;
-    let author = await this.authorService.findOne(updateBookDto.authorId);
+    const author = await this.authorService.findOne(updateBookDto.authorId);
     book.author = author;
     book = await this.bookRepository.save(book);
   }
 
   async remove(id: number) {
-    let bookToDelete = await this.bookRepository.findOne({ where: { id: id } });
+    const bookToDelete = await this.bookRepository.findOne({
+      where: { id: id },
+    });
     await this.bookRepository.remove(bookToDelete);
   }
 }

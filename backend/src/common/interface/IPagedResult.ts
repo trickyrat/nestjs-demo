@@ -1,6 +1,4 @@
-import { IHasTotalCount } from "./IHasTotalCount";
-import { IListResult } from "./IListResult";
+import { IHasTotalCount } from './IHasTotalCount';
+import { IListResult } from './IListResult';
 
-export interface IPagedResult<T> extends IListResult<T>, IHasTotalCount {
-
-}
+export interface IPagedResult<T> extends IListResult<T>, IHasTotalCount {}
