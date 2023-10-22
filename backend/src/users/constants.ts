@@ -1,3 +1,3 @@
 export const UserConstants = {
-  saltRound: 8
-}
+  saltRound: 8,
+};

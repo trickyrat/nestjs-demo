@@ -1,21 +1,27 @@
-import { IAuditable } from "src/common/interface/IAuditable";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { IAuditable } from 'src/common/interface/IAuditable';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity("roles")
+@Entity('roles')
 export class Role implements IAuditable {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: "" })
+  @Column({ default: '' })
   name: string;
 
-  @CreateDateColumn({ name: "createdTime" })
+  @CreateDateColumn({ name: 'createdTime' })
   createdTime: string;
 
-  @Column({ default: "" })
+  @Column({ default: '' })
   createdBy: string;
 
-  @UpdateDateColumn({ name: "lastModifiedTime", nullable: true })
+  @UpdateDateColumn({ name: 'lastModifiedTime', nullable: true })
   lastModifiedTime: string;
 
   @Column({ nullable: true })

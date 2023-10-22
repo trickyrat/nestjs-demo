@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module, NestModule } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -35,7 +35,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) { }
+  configure() {}
 
-  constructor(private dataSource: DataSource) { }
+  constructor(private dataSource: DataSource) {}
 }

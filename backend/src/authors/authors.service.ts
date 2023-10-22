@@ -10,7 +10,7 @@ import { Author } from './entities/author.entity';
 export class AuthorsService {
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>,
-  ) { }
+  ) {}
 
   create(createAuthorDto: CreateAuthorDto) {
     const author = new Author();

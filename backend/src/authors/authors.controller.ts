@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
 import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
@@ -8,9 +17,9 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { Author } from './entities/author.entity';
 
 @Controller('authors')
-@ApiTags("Authors")
+@ApiTags('Authors')
 export class AuthorsController {
-  constructor(private readonly authorsService: AuthorsService) { }
+  constructor(private readonly authorsService: AuthorsService) {}
 
   @Post()
   create(@Body() createAuthorDto: CreateAuthorDto) {
@@ -18,8 +27,10 @@ export class AuthorsController {
   }
 
   @Get()
-  async findAll(@Query() query: PagedSortedAndFilteredResultRequestDto): Promise<PagedResultDto<Author>> {
-    let res = await this.authorsService.findAll(query);
+  async findAll(
+    @Query() query: PagedSortedAndFilteredResultRequestDto,
+  ): Promise<PagedResultDto<Author>> {
+    const res = await this.authorsService.findAll(query);
     return new PagedResultDto<Author>(res[0], res[1]);
   }
 

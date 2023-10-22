@@ -5,14 +5,14 @@ export type OwnerDocument = HydratedDocument<Owner>;
 
 @Schema()
 export class Owner {
-    @Prop()
-    name: string;
+  @Prop()
+  name: string;
 
-    @Prop()
-    age: number;
+  @Prop()
+  age: number;
 
-    @Prop()
-    breed: string;
+  @Prop()
+  breed: string;
 }
 
 export const OwnerSchema = SchemaFactory.createForClass(Owner);

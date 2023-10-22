@@ -11,32 +11,30 @@ import { UserDto } from './dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { getNowString } from 'src/utils/time';
 
-
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Role) private roleRepository: Repository<Role>) { }
+    @InjectRepository(Role) private roleRepository: Repository<Role>,
+  ) {}
 
   async seedData() {
-    let roleCount = await this.roleRepository.count();
+    const roleCount = await this.roleRepository.count();
     if (roleCount < 1) {
-      this.roleRepository.save({ name: "admin" });
-      this.roleRepository.save({ name: "moderator" });
-      this.roleRepository.save({ name: "user" });
+      this.roleRepository.save({ name: 'admin' });
+      this.roleRepository.save({ name: 'moderator' });
+      this.roleRepository.save({ name: 'user' });
     }
 
-    let userCount = await this.userRepository.count();
+    const userCount = await this.userRepository.count();
     if (userCount < 1) {
       const salt = await genSalt(UserConstants.saltRound);
       await this.userRepository.save({
-        username: "admin",
-        password: await hash("1q2w3E!", salt),
+        username: 'admin',
+        password: await hash('1q2w3E!', salt),
         salt: salt,
-        nickname: "admin",
-        roles: [
-          { id: 1, name: "admin" }
-        ]
+        nickname: 'admin',
+        roles: [{ id: 1, name: 'admin' }],
       });
     }
   }
@@ -44,17 +42,17 @@ export class UsersService {
   async findOne(input: LoginUserDto): Promise<User> {
     return await this.userRepository.findOne({
       where: {
-        username: input.username
+        username: input.username,
       },
-      relations: ["roles"],
+      relations: ['roles'],
     });
   }
 
   async insert(input: SignUpUserDto): Promise<UserDto> {
-    let roles: Role[] = await this.roleRepository.find({
+    const roles: Role[] = await this.roleRepository.find({
       where: {
-        name: In([...input.roles])
-      }
+        name: In([...input.roles]),
+      },
     });
     let user = new User();
     user.username = input.username;
@@ -69,25 +67,27 @@ export class UsersService {
   }
 
   async checkRolesExisted(roles: string[]): Promise<boolean> {
-    let res = await this.roleRepository.find({
+    const res = await this.roleRepository.find({
       where: {
-        name: In([...roles])
-      }
+        name: In([...roles]),
+      },
     });
     return res.length <= 0 ? false : true;
   }
 
   async checkUserExist(username: string): Promise<boolean> {
-    let user = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: {
-        username: username
-      }
+        username: username,
+      },
     });
     return user === null ? false : true;
   }
 
   async checkDuplicateUsername(username: string): Promise<boolean> {
-    let user = await this.userRepository.findOne({ where: { username: username } });
+    const user = await this.userRepository.findOne({
+      where: { username: username },
+    });
     if (user) {
       return false;
     }

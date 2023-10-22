@@ -1,3 +1,3 @@
 export class RoleDto {
-  name: string
+  name: string;
 }

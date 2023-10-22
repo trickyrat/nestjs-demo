@@ -1,12 +1,15 @@
-import { ApiProperty, OmitType } from "@nestjs/swagger";
-import { LimitedResultRequestDto } from "./LimitedResultRequest.dto";
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { LimitedResultRequestDto } from './LimitedResultRequest.dto';
 
-export class PagedResultRequestDto extends OmitType(LimitedResultRequestDto, []) {
+export class PagedResultRequestDto extends OmitType(
+  LimitedResultRequestDto,
+  [],
+) {
   @ApiProperty({
-    description: "The page index",
+    description: 'The page index',
     minimum: 0,
     default: 0,
-    type: Number
+    type: Number,
   })
   skipCount: number = 0;
 }
