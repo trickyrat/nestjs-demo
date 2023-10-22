@@ -3,7 +3,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
-
 const allowList = ['http://localhost:8081'];
 
 async function bootstrap() {
@@ -12,19 +11,19 @@ async function bootstrap() {
   });
   app.enableCors({
     origin: allowList,
-    credentials: true
+    credentials: true,
   });
-  app.setGlobalPrefix("/api");
+  app.setGlobalPrefix('/api');
   app.use(cookieParser());
   const config = new DocumentBuilder()
-    .setTitle("Nestjs Demo Api")
-    .setDescription("The nest js demo api swagger ui.")
-    .setVersion("1.0")
-    .addTag("Nestjs-demo")
+    .setTitle('Nestjs Demo Api')
+    .setDescription('The nest js demo api swagger ui.')
+    .setVersion('1.0')
+    .addTag('Nestjs-demo')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }

@@ -9,21 +9,24 @@ import { Author } from './entities/author.entity';
 @Injectable()
 export class AuthorsService {
   constructor(
-    @InjectRepository(Author) private authorRepository: Repository<Author>) {
-  }
+    @InjectRepository(Author) private authorRepository: Repository<Author>,
+  ) { }
 
   create(createAuthorDto: CreateAuthorDto) {
-    let author = new Author();
+    const author = new Author();
     author.name = createAuthorDto.name;
     this.authorRepository.save(author);
   }
 
-  async findAll(query: PagedSortedAndFilteredResultRequestDto): Promise<[Author[], number]> {
-    let qb = this.authorRepository.createQueryBuilder("author");
+  async findAll(
+    query: PagedSortedAndFilteredResultRequestDto,
+  ): Promise<[Author[], number]> {
+    let qb = this.authorRepository.createQueryBuilder('author');
     if (query.filter) {
-      qb = qb.where("author.name like :name", { name: query.filter + "%" });
+      qb = qb.where('author.name like :name', { name: query.filter + '%' });
     }
-    return qb.orderBy(query.sorting, query.order === "asc" ? "ASC" : "DESC")
+    return qb
+      .orderBy(query.sorting, query.order === 'asc' ? 'ASC' : 'DESC')
       .getManyAndCount();
   }
 
@@ -32,13 +35,15 @@ export class AuthorsService {
   }
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto) {
-    let author = await this.authorRepository.findOne({ where: { id: id } })
+    const author = await this.authorRepository.findOne({ where: { id: id } });
     author.name = updateAuthorDto.name;
-    await this.authorRepository.save(author)
+    await this.authorRepository.save(author);
   }
 
   async remove(id: number): Promise<void> {
-    let authorToDelete = await this.authorRepository.findOne({ where: { id: id } });
+    const authorToDelete = await this.authorRepository.findOne({
+      where: { id: id },
+    });
     await this.authorRepository.remove(authorToDelete);
   }
 }
