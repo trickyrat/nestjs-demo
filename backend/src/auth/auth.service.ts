@@ -3,92 +3,51 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { JwtPayload } from './jwt-payload.interface';
-import { LoginUserDto } from 'src/users/dtos/login-user.dto';
-import { SignUpUserDto } from 'src/users/dtos/signup-user.dto';
+import { SignInUserCommand } from 'src/users/commands/login-user.command';
+import { SignUpUserCommand } from 'src/users/commands/signup-user.command';
 import { compare } from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
+import { JwtConfig } from './jwt.config';
 
 @Injectable()
 export class AuthService {
+  private readonly jwtConfig: JwtConfig;
+
   constructor(
     private jwtService: JwtService,
     private userService: UsersService,
-  ) {}
+    private configService: ConfigService
+  ) {
+    this.jwtConfig = this.configService.get<JwtConfig>("jwtConfig");
+  }
 
-  async login(input: LoginUserDto): Promise<any> {
-    const user = await this.userService.findOne(input);
+  async signIn(signInCommand: SignInUserCommand): Promise<{ access_token: string }> {
+    const user = await this.userService.findOne(signInCommand);
     if (!user) {
       return null;
     }
-    const isMatched = await compare(input.password, user.password);
+    const isMatched = await compare(signInCommand.password, user.password);
     if (!isMatched) {
-      return null;
+      throw new UnauthorizedException();
     }
     const roles: string[] =
       user.roles.length == 0 ? [] : user.roles.map((x) => x.name);
     const payload: JwtPayload = {
+      sub: user.id.toString(),
       username: user.username,
       nickname: user.nickname,
       roles: roles,
       permissions: [],
     };
-    const cookie = await this.getCookie(payload);
-
-    return { payload: payload, cookie: cookie };
+    return { access_token: await this.jwtService.signAsync(payload), };
   }
 
-  async getCookie(payload: JwtPayload): Promise<any> {
-    const accessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: jwtConstants.accessTokenExpiresIn,
-    });
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: jwtConstants.refreshTokenExpiresIn,
-    });
-    const now = new Date();
-    const expireDate = new Date(
-      now.setDate(now.getDate() + jwtConstants.cookieMaxAge),
-    );
-    return {
-      cookieName: jwtConstants.cookiesName,
-      value: accessToken + ';refreshToken=' + refreshToken,
-      option: {
-        httpOnly: true,
-        path: '/',
-        expires: expireDate,
-      },
-    };
-  }
-
-  async refresh(refreshToken: string): Promise<any> {
-    const verifyResult = await this.jwtService.verifyAsync(refreshToken);
-    if (!verifyResult) {
-      throw new NotFoundException({
-        status: HttpStatus.NOT_FOUND,
-        message: 'Invalid refresh token.',
-      });
-    }
-    const decode = this.jwtService.decode(refreshToken) as string;
-    const accessToken = await this.jwtService.signAsync(decode);
-    const now = new Date();
-    const expireDate = new Date(
-      now.setDate(now.getDate() + jwtConstants.cookieMaxAge),
-    );
-    return {
-      cookieName: jwtConstants.cookiesName,
-      value: accessToken + ';refreshToken=' + refreshToken,
-      option: {
-        httpOnly: true,
-        path: '/',
-        expires: expireDate,
-      },
-    };
-  }
-
-  async signUp(input: SignUpUserDto): Promise<any> {
+  async signUp(input: SignUpUserCommand): Promise<any> {
     if (!(await this.userService.checkDuplicateUsername(input.username))) {
       throw new BadRequestException({
         status: HttpStatus.BAD_REQUEST,
