@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PagedSortedAndFilteredResultRequestDto } from 'src/common/dto/PagedSortedAndFilteredResultRequest.dto';
 import { Repository } from 'typeorm';
-import { CreateAuthorDto } from './dto/create-author.dto';
-import { UpdateAuthorDto } from './dto/update-author.dto';
+import { CreateAuthorCommand } from './commands/create-author.command';
+import { UpdateAuthorCommand } from './commands/update-author.command';
 import { Author } from './entities/author.entity';
+import { AuthorQuery } from './queries/author.query';
 
 @Injectable()
 export class AuthorsService {
@@ -12,20 +12,20 @@ export class AuthorsService {
     @InjectRepository(Author) private authorRepository: Repository<Author>,
   ) {}
 
-  create(createAuthorDto: CreateAuthorDto) {
-    const author = new Author();
-    author.name = createAuthorDto.name;
-    this.authorRepository.save(author);
+  async create(createAuthorDto: CreateAuthorCommand) {
+    let author = new Author();
+    author = Object.assign(author, createAuthorDto);
+    await this.authorRepository.save(author);
   }
 
   async findAll(
-    query: PagedSortedAndFilteredResultRequestDto,
+    query: AuthorQuery,
   ): Promise<[Author[], number]> {
     let qb = this.authorRepository.createQueryBuilder('author');
     if (query.filter) {
       qb = qb.where('author.name like :name', { name: query.filter + '%' });
     }
-    return qb
+    return await qb
       .orderBy(query.sorting, query.order === 'asc' ? 'ASC' : 'DESC')
       .getManyAndCount();
   }
@@ -34,10 +34,12 @@ export class AuthorsService {
     return await this.authorRepository.findOne({ where: { id: id } });
   }
 
-  async update(id: number, updateAuthorDto: UpdateAuthorDto) {
-    const author = await this.authorRepository.findOne({ where: { id: id } });
-    author.name = updateAuthorDto.name;
-    await this.authorRepository.save(author);
+  async update(id: number, updateAuthorDto: UpdateAuthorCommand) {
+    const originalAuthor = await this.authorRepository.findOne({
+      where: { id: id },
+    });
+    const updatedAuthor = Object.assign(originalAuthor, updateAuthorDto);
+    await this.authorRepository.save(updatedAuthor);
   }
 
   async remove(id: number): Promise<void> {

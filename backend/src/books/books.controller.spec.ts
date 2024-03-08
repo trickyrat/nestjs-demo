@@ -14,7 +14,7 @@ describe('BooksController', () => {
     controller = module.get<BooksController>(BooksController);
   });
 
-  it('should be defined', () => {
+  it('should be defined', async () => {
     expect(controller).toBeDefined();
   });
 });

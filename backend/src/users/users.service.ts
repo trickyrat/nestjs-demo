@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
 import { genSalt, hash } from 'bcrypt';
-import { LoginUserDto } from './dtos/login-user.dto';
+import { SignInUserCommand } from './commands/login-user.command';
 import { UserConstants } from './constants';
-import { SignUpUserDto } from './dtos/signup-user.dto';
+import { SignUpUserCommand } from './commands/signup-user.command';
 import { UserDto } from './dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { getNowString } from 'src/utils/time';
@@ -39,7 +39,7 @@ export class UsersService {
     }
   }
 
-  async findOne(input: LoginUserDto): Promise<User> {
+  async findOne(input: SignInUserCommand): Promise<User | null> {
     return await this.userRepository.findOne({
       where: {
         username: input.username,
@@ -48,7 +48,7 @@ export class UsersService {
     });
   }
 
-  async insert(input: SignUpUserDto): Promise<UserDto> {
+  async insert(input: SignUpUserCommand): Promise<UserDto> {
     const roles: Role[] = await this.roleRepository.find({
       where: {
         name: In([...input.roles]),

@@ -8,53 +8,55 @@ import {
   Put,
   UseGuards,
   Query,
+  HttpException,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { PagedResultDto } from 'src/common/dto/PagedResult.dto';
+import { PagedResultResponse } from 'src/common/response/ListResultResponse';
 import { BooksService } from './books.service';
 import { BookDto } from './dto/book.dto';
-import { GetBookListRequestDto } from './dto/BookGetListRequest.dto';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
+import { BookQuery } from './queries/book.query';
+import { CreateBookCommand } from './commands/create-book.command';
+import { UpdateBookCommand } from './commands/update-book.command';
 import { plainToClass } from 'class-transformer';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('books')
 @ApiTags('Books')
-@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Post()
-  create(@Body() createBookDto: CreateBookDto) {
+  create(@Body() createBookDto: CreateBookCommand) {
     return this.booksService.create(createBookDto);
   }
 
   @Get()
-  @ApiQuery({ type: GetBookListRequestDto })
-  @ApiResponse({ type: PagedResultDto<BookDto> })
+  @ApiResponse({ type: PagedResultResponse<BookDto> })
   async findAll(
-    @Query() query: GetBookListRequestDto,
-  ): Promise<PagedResultDto<BookDto>> {
+    @Query() query: BookQuery,
+  ): Promise<PagedResultResponse<BookDto>> {
     const res = await this.booksService.findAll(query);
     const items: BookDto[] = res[0].map((x) => Object.assign(new BookDto(), x));
-    return new PagedResultDto<BookDto>(items, res[1]);
+    return new PagedResultResponse<BookDto>(items, res[1]);
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, type: BookDto })
-  async findOne(@Param('id') id: string) {
-    const entity = await this.booksService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const entity = await this.booksService.findOne(id);
+    if (!entity) {
+      throw new HttpException(`Cannot find the entity with id ${id}`, 404);
+    }
     return plainToClass(BookDto, entity);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.update(+id, updateBookDto);
+  update(@Param('id') id: number, @Body() updateBookDto: UpdateBookCommand) {
+    return this.booksService.update(id, updateBookDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.booksService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.booksService.remove(id);
   }
 }

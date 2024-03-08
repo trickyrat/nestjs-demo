@@ -1,4 +1,4 @@
-import { IAuditable } from 'src/common/interface/IAuditable';
+
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
+import { IAuditable } from 'src/common/interface/IPagedResult.interface';
 
 @Entity('users')
 export class User implements IAuditable {
