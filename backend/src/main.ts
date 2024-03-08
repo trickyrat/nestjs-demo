@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import { INestApplication } from '@nestjs/common';
 
 const allowList = ['http://localhost:8081'];
 
@@ -14,17 +14,23 @@ async function bootstrap() {
     credentials: true,
   });
   app.setGlobalPrefix('/api');
-  app.use(cookieParser());
-  const config = new DocumentBuilder()
+
+  useSwaggerModule(app);
+
+  await app.listen(3000);
+}
+
+function useSwaggerModule(app: INestApplication) {
+  const openApi = new DocumentBuilder()
     .setTitle('Nestjs Demo Api')
     .setDescription('The nest js demo api swagger ui.')
     .setVersion('1.0')
     .addTag('Nestjs-demo')
+    .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, openApi);
   SwaggerModule.setup('api', app, document);
-
-  await app.listen(3000);
 }
+
 bootstrap();
