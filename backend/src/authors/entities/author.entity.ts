@@ -1,5 +1,5 @@
 import { Book } from 'src/books/entities/book.entity';
-import { IAuditable } from 'src/common/interface/IAuditable';
+import { IAuditable } from 'src/common/interface/IPagedResult.interface';
 import {
   Column,
   CreateDateColumn,
@@ -15,12 +15,18 @@ export class Author implements IAuditable {
   id: number;
 
   @Column()
-  name: string;
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column({ default: true })
+  isActive: boolean;
 
   @CreateDateColumn({ name: 'createdTime' })
   createdTime: string;
 
-  @Column()
+  @Column({ default: '' })
   createdBy: string;
 
   @UpdateDateColumn({ name: 'lastModifiedTime', nullable: true })

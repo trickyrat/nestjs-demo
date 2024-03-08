@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LoginUserDto } from './login-user.dto';
+import { SignInUserCommand } from './login-user.command';
 
-export class SignUpUserDto extends LoginUserDto {
+export class SignUpUserCommand extends SignInUserCommand {
   @ApiProperty()
   roles: string[];
   @ApiProperty()

@@ -1,4 +1,5 @@
-import { IAuditable } from 'src/common/interface/IAuditable';
+
+import { IAuditable } from 'src/common/interface/IPagedResult.interface';
 import {
   Column,
   CreateDateColumn,
