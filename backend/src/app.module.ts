@@ -7,22 +7,21 @@ import { BooksModule } from './books/books.module';
 import { AuthorsModule } from './authors/authors.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { DataSource } from 'typeorm';
-import database from './conifg/database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import config from './conifg/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [database],
-      envFilePath: ['envs/.env.development', 'envs/.env.prod', 'envs/.env.uat'],
+      load: [config],
+      envFilePath: ['env/.env.development.local', 'env/.env.development'],
     }),
     CacheModule.register(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        return configService.get<TypeOrmModuleOptions>('database');
+        return configService.get<TypeOrmModuleOptions>('mysqlConnection');
       },
       name: '',
     }),
@@ -35,7 +34,5 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  configure() {}
-
-  constructor(private dataSource: DataSource) {}
+  configure() { }
 }
