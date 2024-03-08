@@ -4,45 +4,38 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  Res,
+  Get,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { plainToClass } from 'class-transformer';
-import { LoginUserDto } from 'src/users/dtos/login-user.dto';
-import { SignUpUserDto } from 'src/users/dtos/signup-user.dto';
+import { SignInUserCommand } from 'src/users/commands/login-user.command';
+import { SignUpUserCommand } from 'src/users/commands/signup-user.command';
 import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
+import { AllowAnonymous } from './auth.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
+  @AllowAnonymous()
   @Post('login')
-  @HttpCode(200)
-  async login(@Body() payload: LoginUserDto, @Res() response: Response) {
-    const user = plainToClass(LoginUserDto, payload);
-    const result = await this.authService.login(user);
-    if (!result) {
-      return response.status(400).json({
-        status: HttpStatus.BAD_REQUEST,
-        message: 'username or password is not correct.',
-      });
-    }
-    response.cookie(
-      result.cookie.cookieName,
-      result.cookie.value,
-      result.cookie.option,
-    );
-    return response.status(200).json({
-      status: HttpStatus.OK,
-      message: 'login successfully!',
-      data: result.payload,
-    });
+  @HttpCode(HttpStatus.OK)
+  async signIn(@Body() payload: SignInUserCommand) {
+    const user = plainToClass(SignInUserCommand, payload);
+    return this.authService.signIn(user);
   }
 
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
+  }
+
+  @AllowAnonymous()
   @Post('signup')
-  async signUp(@Body() input: SignUpUserDto) {
+  async signUp(@Body() input: SignUpUserCommand) {
     return await this.authService.signUp(input);
   }
 }

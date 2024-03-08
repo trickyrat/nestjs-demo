@@ -1,7 +1,7 @@
 // import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export default () => ({
-  database: {
+  mysqlConnection: {
     type: 'mysql',
     host: process.env.MYSQL_HOST,
     port: parseInt(process.env.MYSQL_PORT) || 3306,
@@ -16,4 +16,8 @@ export default () => ({
     synchronize: process.env.MYSQL_SYNCHRONIZE,
     poolSize: parseInt(process.env.MYSQL_POOLSIZE) || 5,
   },
+  jwtConfig: {
+    secret:  process.env.JWT_SECRET,
+    expiresIn: process.env.JWT_EXPIREIN,
+  }
 });
