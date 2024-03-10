@@ -9,7 +9,7 @@ import { AuthorQuery } from './queries/author.query';
 @Injectable()
 export class AuthorsService {
   constructor(
-    @InjectRepository(Author) private authorRepository: Repository<Author>,
+    @InjectRepository(Author) private authorRepository: Repository<Author>
   ) { }
 
   async create(createAuthorCommand: CreateAuthorCommand) {
@@ -25,7 +25,7 @@ export class AuthorsService {
       author = Object.assign(author, command);
       authorsToAdd.push(author);
     })
-    
+
     await this.authorRepository.save(authorsToAdd);
   }
 

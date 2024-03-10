@@ -6,18 +6,17 @@ import {
   Param,
   Delete,
   Put,
-  UseGuards,
   Query,
   HttpException,
 } from '@nestjs/common';
 import { PagedResultResponse } from 'src/common/response/ListResultResponse';
 import { BooksService } from './books.service';
-import { BookDto } from './dto/book.dto';
+import { BookDto } from './dtos/book.dto';
 import { BookQuery } from './queries/book.query';
 import { CreateBookCommand } from './commands/create-book.command';
 import { UpdateBookCommand } from './commands/update-book.command';
 import { plainToClass } from 'class-transformer';
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('books')
 @ApiTags('Books')
