@@ -68,28 +68,34 @@ export class BooksService {
     bookToInsert = await this.bookRepository.save(bookToInsert);
   }
 
-  findAll(input: BookQuery): Promise<[Book[], number]> {
+  async findAll(query: BookQuery): Promise<[Book[], number]> {
     let qb = this.bookRepository
       .createQueryBuilder('book')
       .innerJoin('book.author', 'author');
-    if (input.filter) {
-      qb = qb.andWhere('book.title like :title', { title: input.filter + '%' });
+    if (query.filter) {
+      qb = qb.andWhere('book.title like :title', { title: query.filter + '%' });
     }
-    if (input.startDate && input.endDate) {
+    if (query.startDate && query.endDate) {
       qb = qb.andWhere('book.publishDate BETWEEN :start AND :end', {
-        start: input.startDate,
-        end: input.endDate,
+        start: query.startDate,
+        end: query.endDate,
       });
     }
-    return qb
-      .orderBy(input.sorting, input.order === 'asc' ? 'ASC' : 'DESC')
-      .skip(input.skipCount)
-      .take(input.maxResultCount)
+    if (query.authorId) {
+      qb = qb.andWhere('book.authorId=:authorId', {
+        authorId: query.authorId
+      })
+    }
+
+    return await qb
+      .orderBy(query.sorting, query.order === 'asc' ? 'ASC' : 'DESC')
+      .skip(query.skipCount)
+      .take(query.maxResultCount)
       .getManyAndCount();
   }
 
-  findOne(id: number): Promise<Book> {
-    return this.bookRepository.findOne({ where: { id: id } });
+  async findOne(id: number): Promise<Book> {
+    return await this.bookRepository.findOne({ where: { id: id } });
   }
 
   async update(id: number, updateBookDto: UpdateBookCommand) {
