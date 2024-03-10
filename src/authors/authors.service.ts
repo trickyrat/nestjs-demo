@@ -57,21 +57,4 @@ export class AuthorsService {
     });
     await this.authorRepository.remove(authorToDelete);
   }
-
-  async seedData() {
-    console.log("Seeding author data - Start");
-    const existingCount = await this.authorRepository.count();
-    if (existingCount > 0) {
-      console.log("There is already authors. Skip seeding");
-      return;
-    }
-    await this.createMany([
-      { firstName: "Stephen", lastName: "Hawking" },
-      { firstName: "Eric", lastName: "Matthes" },
-      { firstName: "Alex", lastName: "Xu" },
-      { firstName: "Nick", lastName: "Morgan" },
-      { firstName: "Aditya Y", lastName: "Bhargava" },
-    ]);
-    console.log("Seeding author data - End");
-  }
 }

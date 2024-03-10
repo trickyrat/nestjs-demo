@@ -16,28 +16,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Role) private roleRepository: Repository<Role>,
-  ) {}
-
-  async seedData() {
-    const roleCount = await this.roleRepository.count();
-    if (roleCount < 1) {
-      this.roleRepository.save({ name: 'admin' });
-      this.roleRepository.save({ name: 'moderator' });
-      this.roleRepository.save({ name: 'user' });
-    }
-
-    const userCount = await this.userRepository.count();
-    if (userCount < 1) {
-      const salt = await genSalt(UserConstants.saltRound);
-      await this.userRepository.save({
-        username: 'admin',
-        password: await hash('1q2w3E!', salt),
-        salt: salt,
-        nickname: 'admin',
-        roles: [{ id: 1, name: 'admin' }],
-      });
-    }
-  }
+  ) { }
 
   async findOne(input: SignInUserCommand): Promise<User | null> {
     return await this.userRepository.findOne({
