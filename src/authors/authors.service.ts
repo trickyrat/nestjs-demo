@@ -10,12 +10,23 @@ import { AuthorQuery } from './queries/author.query';
 export class AuthorsService {
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>,
-  ) {}
+  ) { }
 
-  async create(createAuthorDto: CreateAuthorCommand) {
+  async create(createAuthorCommand: CreateAuthorCommand) {
     let author = new Author();
-    author = Object.assign(author, createAuthorDto);
+    author = Object.assign(author, createAuthorCommand);
     await this.authorRepository.save(author);
+  }
+
+  async createMany(createAuthorsCommand: CreateAuthorCommand[]) {
+    let authorsToAdd: Author[] = [];
+    createAuthorsCommand.forEach((command) => {
+      let author = new Author();
+      author = Object.assign(author, command);
+      authorsToAdd.push(author);
+    })
+    
+    await this.authorRepository.save(authorsToAdd);
   }
 
   async findAll(query: AuthorQuery): Promise<[Author[], number]> {
@@ -45,5 +56,22 @@ export class AuthorsService {
       where: { id: id },
     });
     await this.authorRepository.remove(authorToDelete);
+  }
+
+  async seedData() {
+    console.log("Seeding author data - Start");
+    const existingCount = await this.authorRepository.count();
+    if (existingCount > 0) {
+      console.log("There is already authors. Skip seeding");
+      return;
+    }
+    await this.createMany([
+      { firstName: "Stephen", lastName: "Hawking" },
+      { firstName: "Eric", lastName: "Matthes" },
+      { firstName: "Alex", lastName: "Xu" },
+      { firstName: "Nick", lastName: "Morgan" },
+      { firstName: "Aditya Y", lastName: "Bhargava" },
+    ]);
+    console.log("Seeding author data - End");
   }
 }
