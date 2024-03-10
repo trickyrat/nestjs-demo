@@ -8,6 +8,7 @@ import { AuthorsModule } from './authors/authors.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DataSeedModule } from './data-seed/data-seed.module';
 import config from './conifg/config';
 
 @Module({
@@ -29,6 +30,7 @@ import config from './conifg/config';
     AuthorsModule,
     AuthModule,
     UsersModule,
+    DataSeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
