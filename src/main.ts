@@ -30,7 +30,11 @@ function useSwaggerModule(app: INestApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, openApi);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      docExpansion: 'none'
+    }
+  });
 }
 
 bootstrap();
