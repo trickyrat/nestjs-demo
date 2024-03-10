@@ -7,7 +7,9 @@ export class BookQuery
   implements ITimeRangedQuery
 {
   @ApiPropertyOptional()
-  startDate: string;
+  startDate: string | null;
   @ApiPropertyOptional()
-  endDate: string;
+  endDate: string | null;
+  @ApiPropertyOptional()
+  authorId: number | null;
 }
