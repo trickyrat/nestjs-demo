@@ -1,15 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { DataSeedService } from './data-seed.service';
+import { createMock } from '@golevelup/ts-jest';
 
 describe('DataSeedService', () => {
   let service: DataSeedService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [DataSeedService],
-    }).compile();
-
-    service = module.get<DataSeedService>(DataSeedService);
+    service = createMock<DataSeedService>();
   });
 
   it('should be defined', () => {

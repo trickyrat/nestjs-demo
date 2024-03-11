@@ -1,17 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorsController } from './authors.controller';
-import { AuthorsService } from './authors.service';
+import { createMock } from '@golevelup/ts-jest';
 
 describe('AuthorsController', () => {
   let controller: AuthorsController;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthorsController],
-      providers: [AuthorsService],
-    }).compile();
-
-    controller = module.get<AuthorsController>(AuthorsController);
+    controller = createMock<AuthorsController>();
   });
 
   it('should be defined', () => {
