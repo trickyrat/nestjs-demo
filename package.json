@@ -42,6 +42,7 @@
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@golevelup/ts-jest": "^0.4.0",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/config": "^3.2.0",
