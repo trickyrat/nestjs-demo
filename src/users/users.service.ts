@@ -9,7 +9,8 @@ import { UserConstants } from './constants';
 import { SignUpUserCommand } from './commands/signup-user.command';
 import { UserDto } from './dtos/user.dto';
 import { plainToClass } from 'class-transformer';
-import { getNowString } from 'src/utils/time';
+import { getNowString } from 'src/shared/utils';
+
 
 @Injectable()
 export class UsersService {
