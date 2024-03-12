@@ -9,7 +9,7 @@ import { UserConstants } from './constants';
 import { SignUpUserCommand } from './commands/signup-user.command';
 import { UserDto } from './dtos/user.dto';
 import { plainToClass } from 'class-transformer';
-import { getNowString } from 'src/shared/utils';
+import { UtilsService } from 'src/shared/utils';
 
 
 @Injectable()
@@ -17,6 +17,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Role) private roleRepository: Repository<Role>,
+    private utilsService: UtilsService
   ) { }
 
   async findOne(input: SignInUserCommand): Promise<User | null> {
@@ -41,7 +42,7 @@ export class UsersService {
     user.salt = salt;
     user.nickname = input.nickname;
     user.roles = roles;
-    user.createdTime = getNowString();
+    user.createdTime = this.utilsService.getNowString();
     user = await this.userRepository.save(user);
     return plainToClass(UserDto, user.username);
   }
