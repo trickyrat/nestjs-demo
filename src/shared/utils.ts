@@ -1,10 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 
-function getNowString(): string {
-  return moment().format('YYYY-MM-DD HH:mm:ss');
-}
-
-
-export {
-  getNowString
+@Injectable()
+export class UtilsService {
+  getNowString(): string {
+    return moment().format('YYYY-MM-DD HH:mm:ss');
+  }
 }

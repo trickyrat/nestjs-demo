@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { getNowString } from './utils';
+import { UtilsService } from './utils';
 
 @Module({
-  providers: [],
-  exports: [getNowString],
+  providers: [UtilsService],
+  exports: [UtilsService],
 })
 export class SharedModule { }
